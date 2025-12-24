@@ -1,0 +1,50 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+rule_files:
+  # - "alerts/*.yml"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          instance: 'host-machine'
+
+  - job_name: 'ubuntu-nodes'
+    static_configs:
+      - targets: 
+          - 'ubuntu1:9100'
+          - 'ubuntu2:9100'
+          - 'ubuntu3:9100'
+        labels:
+          os: 'ubuntu'
+
+  - job_name: 'centos-nodes'
+    static_configs:
+      - targets:
+          - 'centos1:9100'
+          - 'centos2:9100'
+          - 'centos3:9100'
+        labels:
+          os: 'rocky'
+
+  - job_name: 'jenkins'
+    metrics_path: '/prometheus'
+    static_configs:
+      - targets: ['jenkins:8080']
+
+  - job_name: 'gitlab'
+    metrics_path: '/-/metrics'
+    static_configs:
+      - targets: ['gitlab:80']

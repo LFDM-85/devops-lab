@@ -1,0 +1,57 @@
+---
+- name: Setup Grafana Dashboards
+  hosts: localhost
+  gather_facts: no
+  vars:
+    grafana_url: "http://grafana:3000"
+    grafana_user: "admin"
+    grafana_password: "devopslab123"
+  tasks:
+    - name: Wait for Grafana to be ready
+      uri:
+        url: "{{ grafana_url }}/api/health"
+        status_code: 200
+      register: result
+      until: result.status == 200
+      retries: 30
+      delay: 5
+
+    - name: Add Prometheus as datasource
+      uri:
+        url: "{{ grafana_url }}/api/datasources"
+        method: POST
+        user: "{{ grafana_user }}"
+        password: "{{ grafana_password }}"
+        force_basic_auth: yes
+        body_format: json
+        body:
+          name: "Prometheus"
+          type: "prometheus"
+          url: "http://prometheus:9090"
+          access: "proxy"
+          isDefault: true
+        status_code: [200, 409]
+      register: datasource_result
+
+    - name: Download Node Exporter Full dashboard
+      get_url:
+        url: https://grafana.com/api/dashboards/1860/revisions/latest/download
+        dest: /tmp/node-exporter-dashboard.json
+
+    - name: Import Node Exporter dashboard
+      uri:
+        url: "{{ grafana_url }}/api/dashboards/db"
+        method: POST
+        user: "{{ grafana_user }}"
+        password: "{{ grafana_password }}"
+        force_basic_auth: yes
+        body_format: json
+        body:
+          dashboard: "{{ lookup('file', '/tmp/node-exporter-dashboard.json') | from_json }}"
+          overwrite: true
+        status_code: [200, 412]
+      register: dashboard_result
+
+    - name: Display Grafana URL
+      debug:
+        msg: "Grafana is ready at {{ grafana_url }} (admin/devopslab123)"

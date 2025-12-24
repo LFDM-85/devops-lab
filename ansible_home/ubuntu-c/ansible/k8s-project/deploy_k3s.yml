@@ -1,0 +1,70 @@
+---
+- name: Prepare Nodes
+  hosts: k3s_cluster
+  become: yes
+  tasks:
+    - name: Ensure dependencies are installed (Ubuntu)
+      apt:
+        name: 
+          - curl
+          - procps
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure dependencies are installed (Rocky/RHEL)
+      dnf:
+        name: 
+          - curl
+          - procps-ng
+        state: present
+      when: ansible_os_family == "RedHat"
+
+- name: Install K3s Master
+  hosts: k3s_master
+  become: yes
+  tasks:
+    - name: Install K3s Binaries (Skip Systemd Start)
+      shell: curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_START=true INSTALL_K3S_SKIP_ENABLE=true sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Start K3s Server manually
+      shell: |
+        if ! pgrep -f "k3s server" > /dev/null; then
+          nohup k3s server --https-listen-port 6443 --write-kubeconfig-mode 644 > /var/log/k3s.log 2>&1 &
+        fi
+      register: k3s_start
+
+    - name: Wait for K3s to be ready
+      wait_for:
+        port: 6443
+        delay: 5
+        timeout: 60
+
+    - name: Get K3s Node Token
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: node_token_base64
+
+    - name: Store Token
+      set_fact:
+        k3s_token: "{{ node_token_base64['content'] | b64decode | trim }}"
+
+- name: Install K3s Workers
+  hosts: k3s_workers
+  become: yes
+  vars:
+    # Use internal docker DNS name for master
+    master_url: "https://ubuntu1:6443"
+    token: "{{ hostvars[groups['k3s_master'][0]]['k3s_token'] }}"
+  tasks:
+    - name: Install K3s Agent Binaries (Skip Systemd Start)
+      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_SKIP_START=true INSTALL_K3S_SKIP_ENABLE=true K3S_URL={{ master_url }} K3S_TOKEN={{ token }} sh -"
+      args:
+        creates: /usr/local/bin/k3s-agent
+
+    - name: Start K3s Agent manually
+      shell: |
+        if ! pgrep -f "k3s agent" > /dev/null; then
+          nohup k3s agent --server {{ master_url }} --token {{ token }} > /var/log/k3s-agent.log 2>&1 &
+        fi

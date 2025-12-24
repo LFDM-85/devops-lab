@@ -1,0 +1,28 @@
+---
+- name: Verify Prometheus can scrape all targets
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Check Prometheus health
+      uri:
+        url: http://prometheus:9090/-/healthy
+        status_code: 200
+      register: prom_health
+
+    - name: Get Prometheus targets
+      uri:
+        url: http://prometheus:9090/api/v1/targets
+        return_content: yes
+      register: prom_targets
+
+    - name: Display target status
+      debug:
+        msg: "{{ prom_targets.json }}"
+
+    - name: Count active targets
+      set_fact:
+        active_count: "{{ prom_targets.json.data.activeTargets | length }}"
+
+    - name: Report monitoring status
+      debug:
+        msg: "Prometheus is healthy and scraping {{ active_count }} targets"

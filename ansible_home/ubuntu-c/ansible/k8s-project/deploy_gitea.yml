@@ -1,0 +1,33 @@
+---
+- name: Deploy Gitea SCM
+  hosts: k3s_master
+  become: yes
+  tasks:
+    - name: Create gitea namespace
+      command: kubectl create namespace gitea
+      register: ns_create
+      failed_when: false
+      changed_when: "'created' in ns_create.stdout"
+
+    - name: Add Gitea Helm repo
+      command: helm repo add gitea-charts https://dl.gitea.io/charts/
+      changed_when: false
+
+    - name: Update Helm repos
+      command: helm repo update
+      changed_when: false
+
+    - name: Install Gitea via Helm
+      command: >
+        helm upgrade --install gitea gitea-charts/gitea
+        --namespace gitea
+        --set gitea.config.server.DOMAIN=localhost
+        --set gitea.config.server.HTTP_PORT=3000
+        --set service.http.type=NodePort
+        --set service.http.nodePort=30000
+        --wait
+      register: gitea_install
+
+    - name: Show Gitea Status
+      debug:
+        msg: "Gitea deployed. Access at http://localhost:30000"

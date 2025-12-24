@@ -1,0 +1,7 @@
+.env
+# Runtime / data (DO NOT COMMIT)
+devops_data/
+ansible_home/**/.config/
+ansible_home/**/.ssh/
+**/logs/
+**/data/

@@ -1,0 +1,39 @@
+---
+- name: Setup Kubernetes Tools (Helm)
+  hosts: k3s_master
+  become: yes
+  tasks:
+    - name: Download Helm script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0700'
+
+    - name: Install Helm
+      shell: /tmp/get_helm.sh
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Verify Helm installation
+      command: helm version
+      register: helm_version
+      changed_when: false
+
+    - name: Print Helm Version
+      debug:
+        msg: "Helm installed: {{ helm_version.stdout }}"
+
+    - name: Add common Helm Repos
+      command: helm repo add {{ item.name }} {{ item.url }}
+      loop:
+        - { name: 'bitnami', url: 'https://charts.bitnami.com/bitnami' }
+        - { name: 'prometheus-community', url: 'https://prometheus-community.github.io/helm-charts' }
+        - { name: 'grafana', url: 'https://grafana.github.io/helm-charts' }
+        - { name: 'jenkins', url: 'https://charts.jenkins.io' }
+        - { name: 'argo', url: 'https://argoproj.github.io/argo-helm' }
+      register: repo_add
+      changed_when: "repo_add.rc == 0"
+      failed_when: false # Ignore if already exists
+
+    - name: Update Helm Repos
+      command: helm repo update

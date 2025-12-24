@@ -1,0 +1,52 @@
+---
+- name: Install Jenkins Agent on Target Nodes
+  hosts: cicd
+  become: yes
+  vars:
+    jenkins_url: "http://jenkins:8080"
+    java_package: "{{ 'openjdk-17-jre' if ansible_os_family == 'Debian' else 'java-17-openjdk' }}"
+  tasks:
+    - name: Install Java (Debian/Ubuntu)
+      apt:
+        name: "{{ java_package }}"
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Install Java (RedHat/Rocky)
+      dnf:
+        name: "{{ java_package }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Create Jenkins user
+      user:
+        name: jenkins
+        shell: /bin/bash
+        create_home: yes
+        home: /home/jenkins
+
+    - name: Create Jenkins workspace directory
+      file:
+        path: /home/jenkins/workspace
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: '0755'
+
+    - name: Add jenkins user to docker group
+      user:
+        name: jenkins
+        groups: docker
+        append: yes
+
+    - name: Display message about Jenkins agent setup
+      debug:
+        msg: |
+          Jenkins agent prerequisites installed on {{ inventory_hostname }}.
+          Java version: {{ java_package }}
+          To connect this node to Jenkins:
+          1. Access Jenkins UI at {{ jenkins_url }}
+          2. Go to Manage Jenkins -> Manage Nodes and Clouds
+          3. Add a new node with hostname: {{ inventory_hostname }}
+          4. Use SSH connection with user: jenkins

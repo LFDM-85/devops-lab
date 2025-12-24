@@ -84,8 +84,8 @@ const services = {
         icon: '📈',
         color: '#F46800',
         category: 'Monitoring',
-        port: 3000,
-        url: 'http://localhost:3000',
+        port: 3300,
+        url: 'http://localhost:3300',
         credentials: 'admin / devopslab123',
         description: 'Beautiful analytics and monitoring dashboards for visualizing time-series data.',
         features: [
@@ -96,7 +96,7 @@ const services = {
             'Team collaboration features'
         ],
         quickStart: [
-            'Access Grafana at http://localhost:3000',
+            'Access Grafana at http://localhost:3300',
             'Login with admin / devopslab123',
             'Add Prometheus data source',
             'Import dashboard (ID: 1860 for Node Exporter)',

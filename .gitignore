@@ -5,3 +5,4 @@ ansible_home/**/.config/
 ansible_home/**/.ssh/
 **/logs/
 **/data/
+docker_data/

@@ -27,32 +27,7 @@ const services = {
         integrations: ['GitLab', 'SonarQube', 'Nexus', 'Docker', 'Kubernetes'],
         docs: 'https://www.jenkins.io/doc/'
     },
-    gitlab: {
-        name: 'GitLab',
-        icon: '🦊',
-        color: '#FC6D26',
-        category: 'CI/CD',
-        port: 8081,
-        url: 'http://localhost:8081',
-        credentials: 'root / devopslab123',
-        description: 'Complete DevOps platform with Git repository management and CI/CD pipelines.',
-        features: [
-            'Git repository hosting',
-            'Integrated CI/CD pipelines',
-            'Container registry',
-            'Issue tracking & planning',
-            'GitLab Runners for automation'
-        ],
-        quickStart: [
-            'Access GitLab at http://localhost:8081',
-            'Login with root / devopslab123',
-            'Create a new project',
-            'Add .gitlab-ci.yml for CI/CD',
-            'Push code and watch pipelines run'
-        ],
-        integrations: ['Jenkins', 'Kubernetes', 'Prometheus', 'Vault'],
-        docs: 'https://docs.gitlab.com/'
-    },
+
     prometheus: {
         name: 'Prometheus',
         icon: '📊',

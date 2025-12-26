@@ -87,15 +87,14 @@ Create a custom dashboard showing:
    EOF
    ```
 
-3. **Push to GitLab**
-   - Access GitLab: http://localhost:8081
-   - Create new project "demo-app"
+3. **Host on Git**
+   - Create a new repository on GitHub (or use local path)
    - Push your code
 
 4. **Create Jenkins Pipeline**
    - Open Jenkins: http://localhost:8080
    - Create new Pipeline job
-   - Configure GitLab webhook
+   - Configure SCM (Git) to point to your repository
    - Write Jenkinsfile:
    ```groovy
    pipeline {
@@ -123,7 +122,7 @@ Create a custom dashboard showing:
 
 5. **Trigger Build**
    - Make a code change
-   - Push to GitLab
+   - Push to Git
    - Watch the pipeline execute
 
 ### Challenge
@@ -272,76 +271,7 @@ Create a custom dashboard showing:
 
 ---
 
-## 📊 Exercise 5: End-to-End GitOps Workflow
 
-**Objective**: Implement a complete GitOps deployment workflow.
-
-**Time**: 60-90 minutes
-
-### Steps
-
-1. **Setup GitLab Repository Structure**
-   ```
-   gitops-demo/
-   ├── app/
-   │   ├── Dockerfile
-   │   └── src/
-   ├── k8s/
-   │   ├── base/
-   │   │   ├── deployment.yaml
-   │   │   ├── service.yaml
-   │   │   └── kustomization.yaml
-   │   └── overlays/
-   │       ├── dev/
-   │       └── prod/
-   └── .gitlab-ci.yml
-   ```
-
-2. **Create GitLab CI Pipeline**
-   ```yaml
-   # .gitlab-ci.yml
-   stages:
-     - build
-     - test
-     - deploy
-   
-   build:
-     stage: build
-     script:
-       - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
-       - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-   
-   test:
-     stage: test
-     script:
-       - echo "Run tests here"
-   
-   deploy-dev:
-     stage: deploy
-     script:
-       - kubectl apply -k k8s/overlays/dev/
-     only:
-       - develop
-   
-   deploy-prod:
-     stage: deploy
-     script:
-       - kubectl apply -k k8s/overlays/prod/
-     only:
-       - main
-     when: manual
-   ```
-
-3. **Implement Automated Rollback**
-4. **Monitor Deployments in Grafana**
-5. **Create Deployment Notifications**
-
-### Challenge
-- Implement canary deployments
-- Add automated testing in staging
-- Create deployment approval workflow
-
----
 
 ## 🎓 Exercise 6: Infrastructure as Code
 

@@ -4,7 +4,7 @@
 
 This is a comprehensive DevOps laboratory environment featuring:
 - **Infrastructure**: 7 containerized nodes (Ubuntu & Rocky Linux)
-- **CI/CD**: Jenkins, GitLab
+- **CI/CD**: Jenkins
 - **Monitoring**: Prometheus, Grafana
 - **Security**: HashiCorp Vault
 - **Quality**: SonarQube
@@ -31,7 +31,7 @@ graph TB
     
     subgraph "DevOps Platform"
         Jenkins[Jenkins :8080]
-        GitLab[GitLab :8081]
+
         Prom[Prometheus :9090]
         Graf[Grafana :3000]
         Vault[Vault :8200]
@@ -45,7 +45,7 @@ graph TB
     Prom --> U1 & U2 & U3 & C1 & C2 & C3
     Graf --> Prom
     Jenkins --> U1 & C1
-    GitLab --> Jenkins
+
 ```
 
 ## 📦 Service Inventory
@@ -67,7 +67,7 @@ graph TB
 | Service | Port | Purpose | Credentials |
 |---------|------|---------|-------------|
 | Jenkins | 8080 | CI/CD automation | admin/devopslab123 |
-| GitLab | 8081 | Git + CI/CD | root/devopslab123 |
+
 | Prometheus | 9090 | Metrics collection | - |
 | Grafana | 3000 | Visualization | admin/devopslab123 |
 | Vault | 8200 | Secret management | Token: devopslab-root-token |
@@ -126,7 +126,7 @@ ansible-playbook -i ../inventory/hosts.ini monitoring/03-setup-grafana.yml
 
 ### CI/CD
 - `jenkins/01-install-jenkins-agent.yml` - Setup Jenkins build agents
-- `gitlab/01-install-gitlab-runner.yml` - Install GitLab CI runners
+
 
 ### Security
 - `security/01-vault-demo.yml` - Demonstrate secret management
@@ -205,7 +205,7 @@ docker ps -a
 
 # View logs for specific service
 docker logs jenkins
-docker logs gitlab
+
 
 # Restart a service
 docker-compose restart jenkins
@@ -242,8 +242,7 @@ ansible -i inventory/hosts.ini monitoring -m shell -a "curl localhost:9100/metri
 
 ### Path 2: CI/CD Pipeline
 1. Setup Jenkins agents
-2. Configure GitLab runners
-3. Create a sample project
+2. Create a sample project
 4. Build a pipeline
 5. Deploy to Kubernetes
 
@@ -255,7 +254,7 @@ ansible -i inventory/hosts.ini monitoring -m shell -a "curl localhost:9100/metri
 5. Monitor your applications
 
 ### Path 4: GitOps
-1. Setup GitLab repository
+1. Setup Git repository
 2. Create deployment manifests
 3. Configure automated deployments
 4. Implement blue/green deployments
@@ -269,7 +268,7 @@ ansible -i inventory/hosts.ini monitoring -m shell -a "curl localhost:9100/metri
 ### Default Credentials Summary
 - SSH: `ansible/ansible`
 - Jenkins: `admin/devopslab123`
-- GitLab: `root/devopslab123`
+
 - Grafana: `admin/devopslab123`
 - Vault Token: `devopslab-root-token`
 - SonarQube: `admin/admin`

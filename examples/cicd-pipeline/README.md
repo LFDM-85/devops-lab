@@ -10,7 +10,7 @@ demo-app/
 ├── requirements.txt       # Python dependencies
 ├── Dockerfile            # Container image
 ├── Jenkinsfile           # Jenkins pipeline
-├── .gitlab-ci.yml        # GitLab CI pipeline
+
 ├── k8s/                  # Kubernetes manifests
 │   ├── deployment.yaml
 │   └── service.yaml
@@ -76,7 +76,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'http://gitlab/root/demo-app.git'
+                git branch: 'main', url: 'https://github.com/yourusername/demo-app.git'
             }
         }
         
@@ -147,81 +147,7 @@ pipeline {
 }
 ```
 
-## GitLab CI Pipeline
 
-**.gitlab-ci.yml**:
-```yaml
-stages:
-  - test
-  - build
-  - scan
-  - push
-  - deploy
-
-variables:
-  IMAGE_NAME: demo-app
-  REGISTRY: localhost:5000
-
-test:
-  stage: test
-  image: python:3.9
-  script:
-    - pip install -r requirements.txt
-    - pytest tests/ -v --junitxml=report.xml
-  artifacts:
-    reports:
-      junit: report.xml
-
-build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA .
-    - docker tag $IMAGE_NAME:$CI_COMMIT_SHA $IMAGE_NAME:latest
-
-sonarqube-check:
-  stage: scan
-  image: sonarsource/sonar-scanner-cli
-  variables:
-    SONAR_HOST_URL: http://sonarqube:9000
-  script:
-    - sonar-scanner
-  allow_failure: true
-
-push:
-  stage: push
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker tag $IMAGE_NAME:$CI_COMMIT_SHA $REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA
-    - docker push $REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHA
-
-deploy-dev:
-  stage: deploy
-  image: bitnami/kubectl:latest
-  script:
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
-  environment:
-    name: development
-  only:
-    - develop
-
-deploy-prod:
-  stage: deploy
-  image: bitnami/kubectl:latest
-  script:
-    - kubectl apply -f k8s/deployment.yaml
-    - kubectl apply -f k8s/service.yaml
-  environment:
-    name: production
-  only:
-    - main
-  when: manual
-```
 
 ## Kubernetes Manifests
 
@@ -297,9 +223,9 @@ spec:
    git commit -m "Initial commit"
    ```
 
-3. **Push to GitLab**:
    ```bash
-   git remote add origin http://localhost:8081/root/demo-app.git
+   # Add remote (example for GitHub)
+   git remote add origin https://github.com/yourusername/demo-app.git
    git push -u origin main
    ```
 

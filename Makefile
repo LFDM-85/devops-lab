@@ -66,7 +66,7 @@ clean:
 status:
 	@echo "Container Status:"
 	@echo "================"
-	@docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E "(NAMES|ubuntu|centos|jenkins|gitlab|prometheus|grafana|vault|sonar|nexus|registry|portal)"
+	@docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | grep -E "(NAMES|ubuntu|centos|jenkins|prometheus|grafana|vault|sonar|nexus|registry|portal)"
 
 # Tail logs
 logs:

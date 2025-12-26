@@ -34,7 +34,7 @@ This lab provides a **complete DevOps platform** for learning and testing modern
 - **Rocky Nodes**: 3x Rocky Linux 9 with Docker, monitoring agents
 
 ### DevOps Platform (9 Services)
-- **CI/CD**: Jenkins, GitLab CE
+- **CI/CD**: Jenkins
 - **Monitoring**: Prometheus, Grafana, Node Exporter
 - **Security**: HashiCorp Vault
 - **Quality**: SonarQube
@@ -94,7 +94,7 @@ open http://localhost:1000
 4. **Explore the Services**
    - Portal: http://localhost:1000
    - Jenkins: http://localhost:8080
-   - GitLab: http://localhost:8081
+
    - Grafana: http://localhost:3300
    - Prometheus: http://localhost:9090
    - Vault: http://localhost:8200
@@ -111,7 +111,7 @@ open http://localhost:1000
 ┌─────────────────┐     ┌──────────────────────────┐
 │   ubuntu-c      │────▶│  DevOps Services         │
 │  (Control Node) │     │  • Jenkins      :8080    │
-│  - Ansible      │     │  • GitLab       :8081    │
+
 │  - kubectl      │     │  • Prometheus   :9090    │
 │  - helm         │     │  • Grafana      :3300    │
 │  - terraform    │     │  • Vault        :8200    │
@@ -138,7 +138,7 @@ open http://localhost:1000
 | **Portal** | Lab dashboard | 1000 | - |
 | **ubuntu-c** | Ansible control node | 2221 | ansible/ansible |
 | **Jenkins** | CI/CD automation | 8080 | admin/devopslab123 |
-| **GitLab** | Git + CI/CD | 8081 | root/devopslab123 |
+
 | **Prometheus** | Metrics collection | 9090 | - |
 | **Grafana** | Visualization | 3300 | admin/devopslab123 |
 | **Vault** | Secret management | 8200 | Token: devopslab-root-token |
@@ -173,8 +173,6 @@ open http://localhost:3300
 # Setup Jenkins agents
 ansible-playbook -i ../inventory/hosts.ini jenkins/01-install-jenkins-agent.yml
 
-# Install GitLab runners
-ansible-playbook -i ../inventory/hosts.ini gitlab/01-install-gitlab-runner.yml
 
 # Access Jenkins
 open http://localhost:8080
@@ -259,7 +257,7 @@ docker-compose up -d ubuntu-c ubuntu1 ubuntu2
 2. **CI/CD** → Setup Jenkins → Create pipelines → Deploy apps
 3. **Kubernetes** → Deploy K3s → Manage workloads → Scale apps
 4. **Monitoring** → Setup Prometheus → Create dashboards → Configure alerts
-5. **GitOps** → Setup GitLab → Automate deployments → Implement workflows
+5. **GitOps** → Setup Git repository → Automate deployments → Implement workflows
 
 ## 🤝 Contributing
 

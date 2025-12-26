@@ -1,4 +1,4 @@
-.env
+
 # Runtime / data (DO NOT COMMIT)
 devops_data/
 ansible_home/**/.config/

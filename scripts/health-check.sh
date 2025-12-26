@@ -58,7 +58,7 @@ echo "DevOps Services:"
 echo "----------------"
 check_service "Portal" "http://localhost:1000"
 check_service "Jenkins" "http://localhost:8080" "200"
-check_service "GitLab" "http://localhost:8081" "302"
+
 check_service "Prometheus" "http://localhost:9090"
 check_service "Grafana" "http://localhost:3000" "302"
 check_service "Vault" "http://localhost:8200" "[0-9]+"
